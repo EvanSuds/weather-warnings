@@ -36,6 +36,14 @@ body {
 }
 
 .content_image {
-	width: 150px;
-	height: 150px;
+	width: 110px;
+	height: 110px;
+}
+
+#info_button {
+	border-radius: 12px;
+	font-weight:bold;
+	font-size:2em;
+	color: black;
+	
 }

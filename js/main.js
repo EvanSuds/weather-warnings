@@ -1,4 +1,7 @@
-// English regions and their associated abbreviations
+//Global variables
+const apiKey = "YOUR API KEY GOES HERE";
+var description = "";
+//English regions and their associated abbreviations
 const regions = {
     southwestengland: "SW",
     london: "SE",
@@ -14,7 +17,7 @@ const regions = {
 window.onload = function() {
     var locationPrivilege = "http://tizen.org/privilege/location";
     var result = tizen.ppm.checkPermission(locationPrivilege);
-
+    document.getElementById("info_button").addEventListener("click", showDescription);
     switch (result) {
         case "PPM_ALLOW":
             permissionSuccessCallback();
@@ -33,7 +36,7 @@ window.onload = function() {
 };
 
 function permissionSuccessCallback() {
-    callGeoLocationService()
+    callGeoLocationService();
 }
 
 function permissionDeniedCallback() {
@@ -92,7 +95,7 @@ function lookupRegion(pos) {
     const long = pos.longitude;
     xhr.withCredentials = true;
     xhr.open("GET", "https://reverse-geocoding-to-city.p.rapidapi.com/data/reverse-geocode?latitude=" + lat + "&longitude=" + long + "&localityLanguage=en");
-    xhr.setRequestHeader("X-RapidAPI-Key","YOUR API KEY GOES HERE");
+    xhr.setRequestHeader("X-RapidAPI-Key",apiKey);
     xhr.setRequestHeader("X-RapidAPI-Host", "reverse-geocoding-to-city.p.rapidapi.com");
     xhr.addEventListener("readystatechange", function() {
         if (this.readyState === this.DONE) {
@@ -124,7 +127,7 @@ function getWeatherWarnings(region) {
     xhr.open("GET", "https://www.metoffice.gov.uk/public/data/PWSCache/WarningsRSS/Region/" + region);
     xhr.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
-            var x = document.getElementById("spinner");
+            var x = document.getElementById("spinner_div");
             x.style.display = "none";
             parseResponse(this);
         }
@@ -137,20 +140,27 @@ function parseResponse(res) {
     var xmlDoc = res.responseXML;
     var x = xmlDoc.getElementsByTagName("title");
     var imageElement = document.getElementById("warning_image");
+    var d = xmlDoc.getElementsByTagName("description");
     if (x.length > 1) {
         // TODO: Check if current time is within validity period
-        var title = x[1].childNodes[0].nodeValue.toLowerCase();
+        var title = x[1].childNodes[0].nodeValue;
+        description = d[1].childNodes[0].nodeValue;
         document.getElementById("textbox").textContent = title;
+        document.getElementById("info_button").hidden=false;
+        document.getElementById("textbox").textContent = title;
+        
         var details = title.split(" ");
         // E.G. Yellow warning of rain ...
-        var warningColour = details[0];
-        var weatherType = details[3];
+        var warningColour = details[0].toLowerCase();
+        var weatherType = details[3].toLowerCase();
         switchBgColour(warningColour);
-        document.getElementById("textbox").textContent = title;
+        
         imageElement.src = "/assets/" + weatherType + ".png";
+        document.getElementById("warning_div").hidden=false;
     } else {
         document.getElementById("textbox").textContent = "No weather warnings for your region.";
         imageElement.src = "/assets/ok.png";
+        document.getElementById("warning_div").hidden=false;
         document.body.style.backgroundColor = "#00ff00";
     }
 
@@ -168,4 +178,8 @@ function switchBgColour(colour) {
             document.body.style.backgroundColor = colour;
         }
     }
+}
+
+function showDescription() {
+	alert(description);
 }

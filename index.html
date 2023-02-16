@@ -15,11 +15,14 @@
   <div class=contents>
   	<div style='margin:auto;'>
   		<center>
-  		<img hidden class="content_image" id="warning_image" src="">
-  			<br/>
+  		<div id=warning_div hidden>
+  			<img class="content_image" id="warning_image" src="">
+  		</div>
+  		<div id=spinner_div>
   			<div class="content_loader" id="spinner"></div>
-  			<br/>
-  			<span class=content_text id=textbox>Getting GPS location...</span>
+  		</div>
+  			<p class=content_text id=textbox>Getting GPS location...</p>
+  			<button hidden type="button" id="info_button">More Info</button>
   		</center>
   	</div>
   </div>
