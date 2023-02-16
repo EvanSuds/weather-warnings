@@ -1,0 +1,5 @@
+*.txt
+.project
+.settings/*
+.sign/*
+.tproject
